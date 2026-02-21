@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R Programming Guide – Monu Prajapati | Biostatistics & Clinical Research</title>
+    <meta name="description" content="Complete R Programming Guide by Monu Prajapati for Biostatistics, Clinical Research, and Data Analysis. Learn statistical tests, survival analysis, and data visualization in R.">
+    <meta name="keywords" content="R programming, Biostatistics, Clinical Research, R survival analysis, R guide, statistical analysis, Kaplan-Meier, Cox regression, NFHS data, dplyr, clinical data analysis">
+    <meta name="author" content="Monu Prajapati">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="R Programming Guide – Monu Prajapati">
+    <meta property="og:description" content="Professional guide for Biostatistics and Clinical Research using R programming">
+    <meta property="og:type" content="website">
+    
+    <!-- Google Analytics Placeholder -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID "></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e40af;
+            --black: #1f2937;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-600: #4b5563;
+            --gray-800: #1f2937;
+            --accent-cyan: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--white);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+            color: var(--white);
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Navigation Styles */
+        nav {
+            background-color: var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-blue);
+            padding: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            list-style: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-800);
+            font-weight: 500;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 4px;
+            width: 200px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background-color: var(--dark-blue);
+        }
+
+        /* Mobile Navigation */
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 0;
+                padding: 1rem 0;
+                border-top: 1px solid var(--gray-200);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--gray-100);
+            }
+
+            .search-box {
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .search-box input {
+                flex: 1;
+                width: auto;
+            }
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 100px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--black);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-blue);
+            display: inline-block;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: var(--dark-blue);
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            color: var(--gray-800);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card:hover {
+            border-color: var(--primary-blue);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .card h4 {
+            color: var(--primary-blue);
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        .card code {
+            display: block;
+            background-color: var(--gray-800);
+            color: #a5f3fc;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            min-width: 600px;
+        }
+
+        th {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        tr:hover {
+            background-color: var(--gray-50);
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--gray-50);
+        }
+
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .note-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid var(--primary-blue);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note-box p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .author-card {
+            background: var(--gray-50);
+            border: 2px solid var(--primary-blue);
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 3rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .expertise-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+
+        footer {
+            background-color: var(--black);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            h1 { 
+                font-size: 1.75rem; 
+            }
+            
+            .subtitle { 
+                font-size: 1rem; 
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.25rem;
+            }
+            
+            .card-grid { 
+                grid-template-columns: 1fr; 
+                gap: 1rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .author-card { 
+                flex-direction: column; 
+                text-align: center; 
+                padding: 1.5rem;
+            }
+            
+            .author-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .code-block {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+            
+            main {
+                padding: 1rem;
+            }
+            
+            section {
+                margin-bottom: 2rem;
+            }
+            
+            .expertise-tags {
+                justify-content: center;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .nav-container {
+                padding: 0.75rem;
+            }
+            
+            .btn {
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>R Programming Guide – Monu Prajapati</h1>
+            <p class="subtitle">Complete guide for Biostatistics, Clinical Research, and Data Analysis using R</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <div class="nav-header">
+                <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation">
+                    ☰
+                </button>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#basic-operations" onclick="closeNav()">Basic</a></li>
+                <li><a href="#descriptive-stats" onclick="closeNav()">Descriptive</a></li>
+                <li><a href="#dplyr" onclick="closeNav()">dplyr</a></li>
+                <li><a href="#missing-data" onclick="closeNav()">Missing Data</a></li>
+                <li><a href="#assumptions" onclick="closeNav()">Assumptions</a></li>
+                <li><a href="#statistical-tests" onclick="closeNav()">Tests</a></li>
+                <li><a href="#effect-size" onclick="closeNav()">Effect Size</a></li>
+                <li><a href="#regression" onclick="closeNav()">Regression</a></li>
+                <li><a href="#survival-analysis" onclick="closeNav()">Survival</a></li>
+                <li><a href="#baseline-table" onclick="closeNav()">Table 1</a></li>
+                <li><a href="#workflow" onclick="closeNav()">Workflow</a></li>
+            </ul>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search commands...">
+                <button class="btn" onclick="searchFunction()">Search</button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Section 1: Basic R Operations -->
+        <section id="basic-operations">
+            <h2>1. Basic R Operations</h2>
+            <p>Essential commands for data management and package handling.</p>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Import CSV</h4>
+                    <p>Purpose: Import CSV files into R dataframe.</p>
+                    <code>data <- read.csv("clinical_data.csv")</code>
+                </div>
+
+                <div class="card">
+                    <h4>Import Excel</h4>
+                    <p>Purpose: Import Excel files (common in clinical data).</p>
+                    <code>library(readxl)</code>
+                    <code>data <- read_excel("data.xlsx")</code>
+                </div>
+
+                <div class="card">
+                    <h4>View Data</h4>
+                    <p>Purpose: Inspect first few rows.</p>
+                    <code>head(data, 10)</code>
+                </div>
+
+                <div class="card">
+                    <h4>Structure</h4>
+                    <p>Purpose: Check data structure and variable types.</p>
+                    <code>str(data)</code>
+                </div>
+
+                <div class="card">
+                    <h4>Summary</h4>
+                    <p>Purpose: Descriptive statistics overview.</p>
+                    <code>summary(data)</code>
+                </div>
+
+                <div class="card">
+                    <h4>Factor Conversion</h4>
+                    <p>Purpose: Convert variables to categorical (very common error).</p>
+                    <code>data$group <- factor(data$group)</code>
+                    <code>data$gender <- factor(data$gender, levels=c("Male","Female"))</code>
+                </div>
+
+                <div class="card">
+                    <h4>Install Package</h4>
+                    <p>Purpose: Download new packages.</p>
+                    <code>install.packages("dplyr")</code>
+                </div>
+
+                <div class="card">
+                    <h4>Load Package</h4>
+                    <p>Purpose: Activate installed package.</p>
+                    <code>library(dplyr)</code>
+                </div>
+
+                <div class="card">
+                    <h4>Export CSV</h4>
+                    <p>Purpose: Save results for publication.</p>
+                    <code>write.csv(summary_stats, "results.csv", row.names=FALSE)</code>
+                </div>
+
+                <div class="card">
+                    <h4>Save Model</h4>
+                    <p>Purpose: Save fitted models for later use.</p>
+                    <code>save(lm_model, file="model.RData")</code>
+                    <code>saveRDS(cox_model, "cox_model.rds")</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Descriptive Statistics -->
+        <section id="descriptive-stats">
+            <h2>2. Descriptive Statistics</h2>
+            <p>Calculate basic statistical measures.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Mean</h4>
+                    <code>mean(data$variable, na.rm=TRUE)</code>
+                    <p>Arithmetic average.</p>
+                </div>
+                <div class="card">
+                    <h4>Median</h4>
+                    <code>median(data$variable, na.rm=TRUE)</code>
+                    <p>Middle value.</p>
+                </div>
+                <div class="card">
+                    <h4>Standard Deviation</h4>
+                    <code>sd(data$variable, na.rm=TRUE)</code>
+                    <p>Measure of dispersion.</p>
+                </div>
+                <div class="card">
+                    <h4>Frequency Table</h4>
+                    <code>table(data$category)</code>
+                    <p>Count of categories.</p>
+                </div>
+                <div class="card">
+                    <h4>Missing Data Percentage</h4>
+                    <code>colMeans(is.na(data))*100</code>
+                    <p>Percentage missing per variable.</p>
+                </div>
+                <div class="card">
+                    <h4>Data Cleaning</h4>
+                    <code>data_clean <- na.omit(data)</code>
+                    <p>Remove all rows with missing data.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: dplyr -->
+        <section id="dplyr">
+            <h2>3. Data Manipulation using dplyr</h2>
+            <p>Purpose: Clean, filter, and summarise clinical datasets before analysis.</p>
+
+            <div class="note-box">
+                <p><strong>Install and Load:</strong></p>
+                <code>install.packages("dplyr")</code>
+                <code>library(dplyr)</code>
+            </div>
+
+            <h3>select()</h3>
+            <p>Purpose: Select specific variables from dataset.</p>
+            <div class="code-block">
+select(data, age, gender, bmi)
+            </div>
+
+            <h3>filter()</h3>
+            <p>Purpose: Select observations based on condition.</p>
+            <div class="code-block">
+filter(data, age > 50)
+filter(data, gender == "Male")
+            </div>
+
+            <h3>mutate()</h3>
+            <p>Purpose: Create new variables.</p>
+            <div class="code-block">
+mutate(data, bmi_group = ifelse(bmi < 25, "Normal", "Overweight"))
+            </div>
+
+            <h3>arrange()</h3>
+            <p>Purpose: Sort data.</p>
+            <div class="code-block">
+arrange(data, age)        # Ascending
+arrange(data, desc(age))  # Descending
+            </div>
+
+            <h3>group_by() and summarise()</h3>
+            <p>Purpose: Create summary tables.</p>
+            <div class="code-block">
+data %>%
+  group_by(treatment_group) %>%
+  summarise(mean_age = mean(age))
+            </div>
+
+            <h3>Pipe Operator (%>%)</h3>
+            <p>Purpose: Chain multiple operations.</p>
+            <div class="code-block">
+data %>%
+  filter(age > 50) %>%
+  select(age, bmi) %>%
+  arrange(desc(bmi))
+            </div>
+        </section>
+
+        <!-- Section 4: Missing Data -->
+        <section id="missing-data">
+            <h2>4. Missing Data Handling</h2>
+            <p>Purpose: Identify and manage missing observations.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Check Missing</h4>
+                    <code>is.na(data)</code>
+                    <p>Returns TRUE/FALSE matrix.</p>
+                </div>
+                <div class="card">
+                    <h4>Count Missing</h4>
+                    <code>colSums(is.na(data))</code>
+                    <p>Missing count per variable.</p>
+                </div>
+                <div class="card">
+                    <h4>Missing Percentage</h4>
+                    <code>colMeans(is.na(data))*100</code>
+                    <p>Percentage missing (report in publications).</p>
+                </div>
+                <div class="card">
+                    <h4>Remove Missing</h4>
+                    <code>na.omit(data)</code>
+                    <p>Delete rows with any missing.</p>
+                </div>
+                <div class="card">
+                    <h4>Impute Missing</h4>
+                    <code>data$age[is.na(data$age)] <- mean(data$age, na.rm=TRUE)</code>
+                    <p>Replace with mean.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Assumption Checking -->
+        <section id="assumptions">
+            <h2>5. Assumption Checking</h2>
+            <p>Purpose: Ensure validity of statistical tests.</p>
+
+            <h3>Normality Test (Shapiro-Wilk)</h3>
+            <div class="code-block">
+shapiro.test(data$outcome)
+            </div>
+            <p>Interpretation:</p>
+            <ul>
+                <li>p > 0.05: Normal distribution</li>
+                <li>p < 0.05: Use non-parametric test</li>
+            </ul>
+
+            <h3>Normality Visualization (Q-Q Plot)</h3>
+            <div class="code-block">
+qqnorm(data$variable)
+qqline(data$variable)
+            </div>
+            <p>Points on diagonal line = normal distribution.</p>
+
+            <h3>Equal Variance Test (Levene's)</h3>
+            <div class="code-block">
+library(car)
+leveneTest(outcome ~ group, data=data)
+            </div>
+            <p>Interpretation:</p>
+            <ul>
+                <li>p > 0.05: Equal variance</li>
+                <li>p < 0.05: Unequal variance (use Welch t-test)</li>
+            </ul>
+        </section>
+
+        <!-- Section 6: Statistical Tests -->
+        <section id="statistical-tests">
+            <h2>6. Statistical Tests</h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test</th>
+                            <th>When to Use</th>
+                            <th>R Command</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Independent t-test</td>
+                            <td>Compare 2 independent groups</td>
+                            <td><code>t.test(outcome ~ group, data=data)</code></td>
+                        </tr>
+                        <tr>
+                            <td>Paired t-test</td>
+                            <td>Same subjects, 2 time points</td>
+                            <td><code>t.test(before, after, paired=TRUE)</code></td>
+                        </tr>
+                        <tr>
+                            <td>Chi-square</td>
+                            <td>2 categorical variables</td>
+                            <td><code>chisq.test(table(var1, var2))</code></td>
+                        </tr>
+                        <tr>
+                            <td>ANOVA</td>
+                            <td>Compare 3+ groups</td>
+                            <td>
+                                <code>model <- aov(outcome ~ group, data=data)</code><br>
+                                <code>summary(model)</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Correlation</td>
+                            <td>Linear relationship</td>
+                            <td><code>cor.test(x, y, method="pearson")</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Non-Parametric Alternatives</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parametric</th>
+                            <th>Non-Parametric</th>
+                            <th>R Command</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Independent t-test</td>
+                            <td>Mann-Whitney U</td>
+                            <td><code>wilcox.test(outcome ~ group, data=data)</code></td>
+                        </tr>
+                        <tr>
+                            <td>Paired t-test</td>
+                            <td>Wilcoxon Signed Rank</td>
+                            <td><code>wilcox.test(before, after, paired=TRUE)</code></td>
+                        </tr>
+                        <tr>
+                            <td>ANOVA</td>
+                            <td>Kruskal-Wallis</td>
+                            <td><code>kruskal.test(outcome ~ group, data=data)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 7: Effect Size -->
+        <section id="effect-size">
+            <h2>7. Effect Size</h2>
+            <p>Purpose: Measure magnitude of difference.</p>
+
+            <div class="code-block">
+library(effsize)
+cohen.d(outcome ~ group, data=data)
+            </div>
+
+            <p>Interpretation (Cohen's d):</p>
+            <ul>
+                <li>0.2: Small effect</li>
+                <li>0.5: Medium effect</li>
+                <li>0.8: Large effect</li>
+            </ul>
+        </section>
+
+        <!-- Section 8: Regression -->
+        <section id="regression">
+            <h2>8. Regression Analysis</h2>
+
+            <h3>Linear Regression</h3>
+            <div class="code-block">
+lm_model <- lm(outcome ~ predictor1 + predictor2, data=data)
+summary(lm_model)
+            </div>
+            <p>R-squared: Percentage of variation explained.</p>
+
+            <h3>Regression Diagnostics</h3>
+            <p>Purpose: Validate regression assumptions.</p>
+            <div class="code-block">
+# Diagnostic plots
+par(mfrow=c(2,2))
+plot(lm_model)
+
+# Check multicollinearity
+library(car)
+vif(lm_model)
+
+# Normality of residuals
+shapiro.test(residuals(lm_model))
+            </div>
+            <p>Check:</p>
+            <ul>
+                <li>VIF < 5: No multicollinearity</li>
+                <li>Residuals normal: Shapiro p > 0.05</li>
+                <li>No pattern in residuals vs fitted plot</li>
+            </ul>
+
+            <h3>Logistic Regression</h3>
+            <div class="code-block">
+logit_model <- glm(disease ~ age + bmi, family=binomial, data=data)
+
+# Summary
+summary(logit_model)
+
+# Odds Ratios with CI
+exp(cbind(OR=coef(logit_model), confint(logit_model)))
+            </div>
+            <p>Interpretation:</p>
+            <ul>
+                <li>OR = 1: No effect</li>
+                <li>OR > 1: Increased odds</li>
+                <li>OR < 1: Decreased odds</li>
+            </ul>
+        </section>
+
+        <!-- Section 9: Survival Analysis -->
+        <section id="survival-analysis">
+            <h2>9. Survival Analysis</h2>
+            <p>Purpose: Analyze time-to-event outcomes.</p>
+
+            <div class="note-box">
+                <p><strong>Load survival package:</strong></p>
+                <code>library(survival)</code>
+            </div>
+
+            <h3>Kaplan-Meier</h3>
+            <div class="code-block">
+survfit(Surv(time, status) ~ group, data=data)
+            </div>
+
+            <h3>Cox Regression</h3>
+            <div class="code-block">
+cox_model <- coxph(Surv(time, status) ~ treatment + age, data=data)
+
+# Summary
+summary(cox_model)
+
+# Hazard Ratios
+exp(coef(cox_model))
+
+# Confidence intervals
+exp(confint(cox_model))
+            </div>
+            <p>Output: Hazard Ratio (HR)</p>
+            <ul>
+                <li>HR > 1: Higher risk</li>
+                <li>HR < 1: Lower risk</li>
+                <li>HR = 1: No effect</li>
+            </ul>
+
+            <h3>Proportional Hazards Assumption</h3>
+            <p>Purpose: Check Cox model validity (VERY IMPORTANT).</p>
+            <div class="code-block">
+cox.zph(cox_model)
+            </div>
+            <p>Interpretation:</p>
+            <ul>
+                <li>p > 0.05: Assumption satisfied</li>
+                <li>p < 0.05: Violation - use time-dependent covariates</li>
+            </ul>
+        </section>
+
+        <!-- Section 10: Baseline Table -->
+        <section id="baseline-table">
+            <h2>10. Baseline Characteristics Table (Table 1)</h2>
+            <p>Purpose: Summarize patient characteristics by treatment group.</p>
+
+            <h3>Method 1: dplyr</h3>
+            <div class="code-block">
+data %>%
+  group_by(treatment_group) %>%
+  summarise(
+    N = n(),
+    Age_Mean = mean(age),
+    Age_SD = sd(age),
+    BMI_Mean = mean(bmi),
+    BMI_SD = sd(bmi),
+    Male_N = sum(gender == "Male"),
+    Female_N = sum(gender == "Female")
+  )
+            </div>
+
+            <h3>Method 2: tableone package (PROFESSIONAL)</h3>
+            <p>Standard in pharma and clinical trials.</p>
+            <div class="code-block">
+library(tableone)
+
+CreateTableOne(
+  vars = c("age", "bmi", "gender", "bp_systolic"),
+  strata = "treatment_group",
+  data = data,
+  factorVars = c("gender")
+)
+            </div>
+            <p>Used in:</p>
+            <ul>
+                <li>Pharmaceutical research</li>
+                <li>Clinical trials</li>
+                <li>Journal publications</li>
+            </ul>
+        </section>
+
+        <!-- Section 11: Visualization -->
+        <section id="visualization">
+            <h2>11. Data Visualization with ggplot2</h2>
+            <p>Purpose: Publication-quality figures.</p>
+
+            <div class="note-box">
+                <p><strong>Load ggplot2:</strong></p>
+                <code>library(ggplot2)</code>
+            </div>
+
+            <h3>Histogram</h3>
+            <div class="code-block">
+ggplot(data, aes(x=age)) +
+  geom_histogram(binwidth=5, fill="steelblue", color="white") +
+  labs(title="Age Distribution", x="Age (years)", y="Count") +
+  theme_minimal()
+            </div>
+
+            <h3>Boxplot</h3>
+            <div class="code-block">
+ggplot(data, aes(x=treatment_group, y=outcome, fill=treatment_group)) +
+  geom_boxplot() +
+  labs(title="Outcome by Treatment", x="Group", y="Outcome") +
+  theme_minimal()
+            </div>
+
+            <h3>Scatter Plot with Regression Line</h3>
+            <div class="code-block">
+ggplot(data, aes(x=bmi, y=bp_systolic)) +
+  geom_point() +
+  geom_smooth(method="lm", color="red") +
+  labs(title="BMI vs Blood Pressure", x="BMI", y="Systolic BP") +
+  theme_minimal()
+            </div>
+        </section>
+
+        <!-- Section 12: Sample Size Calculation -->
+        <section id="sample-size">
+            <h2>12. Sample Size Calculation</h2>
+            <p>Purpose: Power analysis for study design (biostatisticians are hired for this).</p>
+
+            <div class="note-box">
+                <p><strong>Load pwr package:</strong></p>
+                <code>library(pwr)</code>
+            </div>
+
+            <h3>Two-sample t-test</h3>
+            <div class="code-block">
+pwr.t.test(
+  d = 0.5,        # Effect size (Cohen's d)
+  power = 0.8,    # Power (1-beta)
+  sig.level = 0.05,  # Alpha
+  type = "two.sample"
+)
+            </div>
+
+            <h3>ANOVA</h3>
+            <div class="code-block">
+pwr.anova.test(
+  k = 3,          # Number of groups
+  f = 0.25,       # Effect size
+  power = 0.8,
+  sig.level = 0.05
+)
+            </div>
+
+            <h3>Correlation</h3>
+            <div class="code-block">
+pwr.r.test(
+  r = 0.3,        # Expected correlation
+  power = 0.8,
+  sig.level = 0.05
+)
+            </div>
+        </section>
+
+        <!-- Section 13: Clinical Workflow -->
+        <section id="workflow">
+            <h2>13. Complete Clinical Analysis Workflow</h2>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Step 1: Import</h4>
+                    <code>read.csv() / read_excel()</code>
+                </div>
+                <div class="card">
+                    <h4>Step 2: Clean</h4>
+                    <code>dplyr operations, factor conversion</code>
+                </div>
+                <div class="card">
+                    <h4>Step 3: EDA</h4>
+                    <code>summary(), table(), ggplot2</code>
+                </div>
+                <div class="card">
+                    <h4>Step 4: Assumptions</h4>
+                    <code>shapiro.test(), leveneTest(), vif()</code>
+                </div>
+                <div class="card">
+                    <h4>Step 5: Tests</h4>
+                    <code>t.test(), wilcox.test(), aov()</code>
+                </div>
+                <div class="card">
+                    <h4>Step 6: Effect Size</h4>
+                    <code>cohen.d()</code>
+                </div>
+                <div class="card">
+                    <h4>Step 7: Regression</h4>
+                    <code>lm(), glm(), coxph()</code>
+                </div>
+                <div class="card">
+                    <h4>Step 8: Survival</h4>
+                    <code>survfit(), cox.zph()</code>
+                </div>
+                <div class="card">
+                    <h4>Step 9: Table 1</h4>
+                    <code>tableone::CreateTableOne()</code>
+                </div>
+                <div class="card">
+                    <h4>Step 10: Export</h4>
+                    <code>write.csv(), ggsave(), save()</code>
+                </div>
+                <div class="card">
+                    <h4>Step 11: Publish</h4>
+                    <code>Generate reports, manuscripts</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 14: About & Contact -->
+        <section id="about-author">
+            <h2>14. About & Contact</h2>
+
+            <div class="author-card">
+                <div class="author-avatar">MP</div>
+                <div class="author-info">
+                    <h3>Monu Prajapati</h3>
+                    <p style="color: var(--primary-blue); font-weight: 700; font-size: 1.1rem;">
+                        Statistician & Biostatistician
+                    </p>
+
+                    <p style="margin-top: 10px;">
+                        Specialized in clinical research data analysis, survival analysis, and statistical modeling.
+                        Experienced in analyzing large-scale health datasets including NFHS and clinical trial data.
+                    </p>
+
+                    <h4 style="margin-top: 20px;">Professional Details</h4>
+                    <p><strong>Location:</strong> Ahmedabad, Gujarat, India</p>
+                    <p><strong>Email:</strong> <a href="mailto:prajpapatimonu@gmail.com">prajpapatimonu@gmail.com</a></p>
+                    <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/monu-prajapati-9ba4b4221/" target="_blank">linkedin.com/in/monu-prajapati-9ba4b4221</a></p>
+
+                    <h4 style="margin-top: 20px;">Software Expertise</h4>
+                    <div class="expertise-tags">
+                        <span class="tag">R</span>
+                        <span class="tag">SAS</span>
+                        <span class="tag">SPSS</span>
+                        <span class="tag">Stata</span>
+                        <span class="tag">SQL</span>
+                        <span class="tag">Excel</span>
+                    </div>
+
+                    <h4 style="margin-top: 20px;">Research Areas</h4>
+                    <div class="expertise-tags">
+                        <span class="tag">Biostatistics</span>
+                        <span class="tag">Clinical Research</span>
+                        <span class="tag">Survival Analysis</span>
+                        <span class="tag">Sample Size Calculation</span>
+                        <span class="tag">Regression Modeling</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Monu Prajapati | Statistician & Biostatistician</p>
+        <p style="margin-top: 8px;">
+            Email: <a href="mailto:prajpapatimonu@gmail.com">prajpapatimonu@gmail.com</a>
+        </p>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        function toggleNav() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        function closeNav() {
+            const navLinks = document.getElementById('navLinks');
+            if (window.innerWidth <= 768) {
+                navLinks.classList.remove('active');
+            }
+        }
+
+        // Search Functionality
+        function searchFunction() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    card.style.display = '';
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    card.style.display = filter === '' ? '' : 'none';
+                }
+            });
+        }
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Copy Code Functionality
+        document.querySelectorAll('.code-block').forEach(block => {
+            block.style.cursor = 'pointer';
+            block.title = 'Click to copy';
+            block.addEventListener('click', function() {
+                navigator.clipboard.writeText(this.textContent);
+                this.style.backgroundColor = '#059669';
+                setTimeout(() => {
+                    this.style.backgroundColor = '#1e293b';
+                }, 200);
+            });
+        });
+
+        // Close nav when clicking outside
+        document.addEventListener('click', function(e) {
+            const nav = document.querySelector('nav');
+            const navLinks = document.getElementById('navLinks');
+            
+            if (!nav.contains(e.target) && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
